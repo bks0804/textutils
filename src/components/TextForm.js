@@ -24,7 +24,7 @@ export default function (props) {
   const handleCopy = () => {
     var text = document.getElementById("mybox");
     text.select();
-    text.setSelectionRange(0, 9999);
+    document.getSelection().removeAllRanges();
     navigator.clipboard.writeText(text.value);
     props.showAlert("You copied the text!", "success");
   };
@@ -40,19 +40,18 @@ export default function (props) {
     setText(event.target.value); // it is used for enter text value in textarea
   };
 
-  const [text, setText] = useState("Enter text here");
+  const [text, setText] = useState("");
   //   setText("enter new value"); // correct way to change text value
   return (
     <>
-      <div className="container">
+      <div className="container my-3">
         <h1>{props.heading}</h1>
         <div className="mb-3">
           <label for="mybox" className="form-label"></label>
           <textarea
             className="form-control"
             style={{
-              backgroundColor: props.mode === "dark" ? "grey" : "white",
-              color: props.mode === "dark" ? "white" : "black",
+              backgroundColor: props.mode === "dark" ? "white" : "white",
             }}
             id="mybox"
             value={text}
@@ -63,6 +62,7 @@ export default function (props) {
           </textarea>
         </div>
         <button
+          disabled={text.length === 0}
           type="button"
           className="btn btn-primary"
           onClick={handleUpClick}
@@ -70,6 +70,7 @@ export default function (props) {
           Convert to Uppercase
         </button>
         <button
+          disabled={text.length === 0}
           type="button"
           className="btn btn-warning mx-3"
           onClick={handleLoClick}
@@ -77,6 +78,7 @@ export default function (props) {
           Convert to Lowercase
         </button>
         <button
+          disabled={text.length === 0}
           type="button"
           className="btn btn-success"
           onClick={handleClearClick}
@@ -85,6 +87,7 @@ export default function (props) {
         </button>
 
         <button
+          disabled={text.length === 0}
           type="button"
           className="btn btn-danger mx-3"
           onClick={handleCopy}
@@ -93,6 +96,7 @@ export default function (props) {
         </button>
 
         <button
+          disabled={text.length === 0}
           type="button"
           className="btn btn-secondary mx-3"
           onClick={handleExtraSpaces}
@@ -104,9 +108,20 @@ export default function (props) {
       <div className="container my-3">
         <h1>Your text summary</h1>
         <p>
-          {text.split(" ").length} words and {text.length} character
+          {
+            text.split(" ").filter((element) => {
+              return element.length !== 0;
+            }).length
+          }
+          words and {text.length} character
         </p>
-        <p>{0.008 * text.split(" ").length} minutes to Read</p>
+        <p>
+          {0.008 *
+            text.split(" ").filter((element) => {
+              return element.length !== 0;
+            }).length}{" "}
+          minutes to Read
+        </p>
         <h2>preview</h2>
         <p>{text.length > 0 ? text : "Enter something to preview it here"}</p>
       </div>
